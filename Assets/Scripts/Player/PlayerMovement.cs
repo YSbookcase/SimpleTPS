@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -67,12 +66,17 @@ public class PlayerMovement : MonoBehaviour
         return rotateDirVector.normalized;
     }
 
-    public void SetBodyRotation(Vector3 direction)
+    public void SetAvatarRotation(Vector3 direction)
     {
         if (direction == Vector3.zero) return;
-        
 
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
 
+        _avatar.rotation = Quaternion.Lerp(
+            _avatar.rotation,
+            targetRotation,
+            _playerStatus.RotateSpeed * Time.deltaTime
+            );
     }
 
     private Vector2 GetMouseDirection()
@@ -82,14 +86,14 @@ public class PlayerMovement : MonoBehaviour
 
         return new Vector2(mouseX, mouseY);
     }
-
+    
     // 벡터 그림 (수업 후)
     public Vector3 GetMoveDirection()
     {
         Vector3 input = GetInputDirection();
 
         Vector3 direction =
-           (transform.right * input.x) +
+           (transform.right * input.x) + 
            (transform.forward * input.z);
 
         return direction.normalized;
@@ -103,3 +107,21 @@ public class PlayerMovement : MonoBehaviour
         return new Vector3(x, 0, z);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

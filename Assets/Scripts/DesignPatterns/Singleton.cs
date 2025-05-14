@@ -11,7 +11,7 @@ namespace DesignPattern
         {
             get
             {
-                if (_instance == null)
+                if(_instance == null)
                 {
                     _instance = FindObjectOfType<T>();
                     DontDestroyOnLoad(_instance);
@@ -22,9 +22,9 @@ namespace DesignPattern
 
         protected void SingletonInit()
         {
-            if (_instance != null && _instance != this)
+            if(_instance != null && _instance != this)
             {
-                Destroy(gameObject);
+                Destroy(gameObject);            
             }
             else
             {
