@@ -2,17 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IDamagable
 {
     public bool IsControlActivate { get; set; } = true;
 
     private PlayerStatus _status;
     private PlayerMovement _movement;
     private Animator _animator;
+    private Image _aimImage;
 
     [SerializeField] private CinemachineVirtualCamera _aimCamera;
     [SerializeField] private Gun _gun;
+    [SerializeField] private Animator _aimAnimator;
+    [SerializeField] private HpGuageUI _hpUI;
 
     [SerializeField] private KeyCode _aimKey = KeyCode.Mouse1;
     [SerializeField] private KeyCode _shootKey = KeyCode.Mouse0;
@@ -28,6 +32,10 @@ public class PlayerController : MonoBehaviour
         _status = GetComponent<PlayerStatus>();
         _movement = GetComponent<PlayerMovement>();
         _animator = GetComponent<Animator>();
+        _aimImage = _aimAnimator.GetComponent<Image>();
+
+        _hpUI.SetImageFillAmount(1);
+        _status.CurrentHp.Value = _status.MaxHP;
     }
 
     private void HandlePlayerControl()
@@ -82,8 +90,33 @@ public class PlayerController : MonoBehaviour
         _status.IsAiming.Value = Input.GetKey(_aimKey);
     }
 
+    public void TakeDamage(int value)
+    {
+        _status.CurrentHp.Value -= value;
+
+        if (_status.CurrentHp.Value <= 0) Dead();
+    }
+
+    public void RecoveryHp(int value)
+    {
+        int hp = _status.CurrentHp.Value + value;
+
+        _status.CurrentHp.Value = Mathf.Clamp(
+            hp,
+            0,
+            _status.MaxHP
+        );
+    }
+
+    public void Dead()
+    {
+        Debug.Log("플레이어 사망 처리");
+    }
+
     public void SubscribeEvents()
     {
+        _status.CurrentHp.Subscribe(SetHpUIGuage);
+
         _status.IsMoving.Subscribe(SetMoveAnimation);
 
         _status.IsAiming.Subscribe(_aimCamera.gameObject.SetActive);
@@ -94,29 +127,27 @@ public class PlayerController : MonoBehaviour
 
     public void UnsubscribeEvents()
     {
+        _status.CurrentHp.Unsubscribe(SetHpUIGuage);
+
         _status.IsMoving.Unsubscribe(SetMoveAnimation);
 
         _status.IsAiming.Unsubscribe(_aimCamera.gameObject.SetActive);
         _status.IsAiming.Unsubscribe(SetAimAnimation);
-        
+
         _status.IsAttacking.Unsubscribe(SetAttackAnimation);
     }
 
-    private void SetAimAnimation(bool value) => _animator.SetBool("IsAim", value);
+    private void SetAimAnimation(bool value)
+    {
+        if (!_aimImage.enabled) _aimImage.enabled = true;
+        _animator.SetBool("IsAim", value);
+        _aimAnimator.SetBool("IsAim", value);
+    }
     private void SetMoveAnimation(bool value) => _animator.SetBool("IsMove", value);
     private void SetAttackAnimation(bool value) => _animator.SetBool("IsAttack", value);
+    private void SetHpUIGuage(int currentHp)
+    {
+        float hp = currentHp / (float)_status.MaxHP;
+        _hpUI.SetImageFillAmount(hp);
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
