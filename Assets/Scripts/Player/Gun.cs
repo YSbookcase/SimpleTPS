@@ -59,7 +59,7 @@ public class Gun : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, _attackRange, _targetLayer))
         {
-
+            //??? 이 부분을...? 어떻게 우회해야 하지....?
             return hit.transform.GetComponent<IDamagable>();
         
         }
