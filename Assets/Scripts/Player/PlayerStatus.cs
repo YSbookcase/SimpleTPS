@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using DesignPattern;
+using UnityEngine;
 
 public class PlayerStatus : MonoBehaviour
 {

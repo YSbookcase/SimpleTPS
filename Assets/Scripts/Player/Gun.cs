@@ -70,6 +70,7 @@ public class Gun : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, _attackRange))
         {
+
             hitTarget = hit;
 
             if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Monster"))
@@ -81,6 +82,7 @@ public class Gun : MonoBehaviour
         else
         {
             hitTarget = default;
+
         }
         return null;
     }
@@ -103,6 +105,6 @@ public class Gun : MonoBehaviour
 
     private void PlayShootEffect()
     {
-        // TODO: ÃÑ±¸ È­¿° È¿°ú. ÆÄÆ¼Å¬·Î ±¸ÇöÇØº¸±â±â
+        // TODO: ì´êµ¬ í™”ì—¼ íš¨ê³¼. íŒŒí‹°í´ë¡œ êµ¬í˜„í•´ë³´ê¸°ê¸°
     }
 }
