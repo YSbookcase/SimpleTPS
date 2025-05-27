@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -11,6 +12,7 @@ public class Gun : MonoBehaviour
     [SerializeField] private int _shootDamage;
     [SerializeField] private float _shootDelay;
     [SerializeField] private AudioClip _shootSFX;
+    [SerializeField] private GameObject _fireParticle;
 
     private CinemachineImpulseSource _impulse;
     private Camera _camera;
@@ -36,8 +38,17 @@ public class Gun : MonoBehaviour
         PlayShootEffect();
         _currentCount = _shootDelay;
 
-        // TODO : Ray ¹ß»ç -> ¹İÈ¯¹ŞÀº ´ë»ó¿¡°Ô µ¥¹ÌÁö ºÎ¿©. ¸ó½ºÅÍ ±¸Çö½Ã °°ÀÌ ±¸Çö
-        IDamagable target = RayShoot();
+        RaycastHit hit;
+        IDamagable target = RayShoot(out hit);
+
+
+        Debug.Log(hit.point);
+
+        if (!hit.Equals(default))
+        {
+            PlayFireEffect(hit.point, Quaternion.LookRotation(hit.normal));
+        }
+
         if (target == null) return true;
 
         target.TakeDamage(_shootDamage);
@@ -52,19 +63,33 @@ public class Gun : MonoBehaviour
         _currentCount -= Time.deltaTime;
     }
 
-    private IDamagable RayShoot()
+    private IDamagable RayShoot(out RaycastHit hitTarget)
     {
         Ray ray = new Ray(_camera.transform.position, _camera.transform.forward);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, _attackRange, _targetLayer))
+        if (Physics.Raycast(ray, out hit, _attackRange))
         {
-            //??? ÀÌ ºÎºĞÀ»...? ¾î¶»°Ô ¿ìÈ¸ÇØ¾ß ÇÏÁö....?
-            return hit.transform.GetComponent<IDamagable>();
-        
-        }
 
+            hitTarget = hit;
+
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Monster"))
+            {
+                return ReferenceRegistry.GetProvider(hit.collider.gameObject).
+                GetAs<NormalMonster>();
+            }
+        }
+        else
+        {
+            hitTarget = default;
+
+        }
         return null;
+    }
+
+    private void PlayFireEffect(Vector3 position, Quaternion rotation)
+    {
+        Instantiate(_fireParticle, position, rotation);
     }
 
     private void PlayShootSound()
@@ -80,6 +105,6 @@ public class Gun : MonoBehaviour
 
     private void PlayShootEffect()
     {
-        // TODO: ÃÑ±¸ È­¿° È¿°ú. ÆÄÆ¼Å¬·Î ±¸ÇöÇØº¸±â±â
+        // TODO: ì´êµ¬ í™”ì—¼ íš¨ê³¼. íŒŒí‹°í´ë¡œ êµ¬í˜„í•´ë³´ê¸°ê¸°
     }
 }
