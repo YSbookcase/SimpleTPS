@@ -5,4 +5,9 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes: []
-  m_configObjects: {}
+  m_configObjects:
+    UnityEditor.XR.VisionOS.VisionOSSettings: {fileID: 11400000, guid: 59ee9681af85d754ba3ad73441868180, type: 2}
+    com.unity.input.settings: {fileID: 11400000, guid: 48a1b91a4694bee41bee4249ad04ac20, type: 2}
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 02bdfc26ff0153c43a809f6acebcec35, type: 3}
+    com.unity.polyspatial.xr.xr_settings: {fileID: 11400000, guid: 06159ef07f772bd4d973caffbd1c5186, type: 2}
+    com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: a9bd871cfb7eace429630f70de063664, type: 2}
